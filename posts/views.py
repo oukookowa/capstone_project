@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets, generics, status
 from rest_framework.permissions import SAFE_METHODS, BasePermission, IsAuthenticatedOrReadOnly, IsAdminUser, IsAuthenticated
 from .models import Post, Comment, Like
-from .serializers import PostSerializer, CommentSerializer
+from .serializers import PostSerializer, CommentSerializer, LikeSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django.contrib.auth import get_user_model
@@ -40,6 +40,7 @@ class IsOwnerOrReadOnly(BasePermission):
 # View for liking a post  
 class LikePostView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = LikeSerializer
 
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk) #generics.get_object_or_404(Post, pk=pk) ->IDK why checker needs this
@@ -60,6 +61,7 @@ class LikePostView(generics.CreateAPIView):
 # View for unliking a post
 class UnlikePostView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = LikeSerializer
 
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
@@ -70,80 +72,9 @@ class UnlikePostView(generics.DestroyAPIView):
         except Like.DoesNotExist:
             return Response({"detail": "You have not liked this post."}, status=status.HTTP_400_BAD_REQUEST)
     
-'''# For practice purposes, here's implementation of the views using generics API views
-# List all posts
-class PostListView(generics.ListAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    permission_class = [IsAuthenticatedOrReadOnly]
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['title', 'author', 'created_at']
-    search_fields = ['title', 'author']
-    ordering_fields = ['title', 'created_at']
-
-
-# Retrieve a post based on its ID
-class PostDetailView(generics.RetrieveApiView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    permission_class = [IsAuthenticatedOrReadOnly]
-
-# Adding a new post
-class PostCreateView(generics.CreateAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    permission_class = [IsAuthenticated]
-
-# Updating a post based on its ID
-class PostUpdateView(generics.UpdateAPIView):
-    queryset = Post.ojects.all()
-    serializer_class = PostSerializer
-    permission_class = [IsAuthenticated]
-
-# Deleting a post based on its ID
-class PostDeleteView(generics.DestroyAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    permission_class = [IsAuthenticated]
-
-# List all comments
-class CommentListView(generics.ListAPIView):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
-    permission_class = [IsAuthenticatedOrReadOnly]
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['title', 'author', 'created_at']
-    search_fields = ['title', 'author']
-    ordering_fields = ['title', 'created_at']
-
-# Retrieve a comment based on its ID
-class CommentDetailView(generics.RetrieveApiView):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
-    permission_class = [IsAuthenticatedOrReadOnly]
-
-# Adding a new comment
-class CommentCreateView(generics.CreateAPIView):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
-    permission_class = [IsAuthenticated]
-
-# Updating a comment based on its ID
-class CommentUpdateView(generics.UpdateAPIView):
-    queryset = Comment.ojects.all()
-    serializer_class = CommentSerializer
-    permission_class = [IsAuthenticated]
-
-# Deleting a comment based on its ID
-class BookDeleteView(generics.DestroyAPIView):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
-    permission_class = [IsOwnerOrReadOnly]
-'''
 
 # Implemented views using rest-framework's viewsets
-
-# Viewsets for CRUD operations for the Post model
+# for CRUD operations for the Post model
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer

@@ -9,6 +9,7 @@ from django.contrib.auth import get_user_model
 
 
 User = get_user_model()
+
 # Register view for user registration
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -41,11 +42,11 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
     
 # A view to follow a particular user and error handling in case user doesn't exist
 class FollowUserView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]  #permissions.IsAuthenticated
+    permission_classes = [IsAuthenticated]  # permissions
 
     def post(self, request, user_id):
         try:
-            user_to_follow = User.objects.get(id=user_id) #CustomUser.objects.all()
+            user_to_follow = User.objects.get(id=user_id) 
             request.user.following.add(user_to_follow)
             serialized_user = UserSerializer(user_to_follow)
             return Response({

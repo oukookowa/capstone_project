@@ -17,3 +17,5 @@ class Notification(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)  # To track if the notification has been read
 
+    def __str__(self):
+        return f"Sender: {self.actor}, receiver: {self.recipient}"
