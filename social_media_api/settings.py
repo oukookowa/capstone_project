@@ -26,7 +26,8 @@ SECRET_KEY = config('SECRET_KEY') # Load the SECRET_KEY from the .env file
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool) # Load the DEBUG value, defaulting to False if not found
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS')  # Retrieve allowed hosts
+# This splits the ALLOWED_HOSTS value from .env into a list
+ALLOWED_HOSTS = config('ALLOWED_HOSTS').split(',')  # Retrieve allowed hosts
 
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
@@ -155,4 +156,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,  # Number of items per page
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        # Add other authentication classes if needed
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+        # You can add more permissions if necessary
+    ),
 }

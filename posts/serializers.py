@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from . models import Post, Comment, Like
+from accounts.serializers import UserSerializer
 
 # Comment serializer to serialize a comment
 class CommentSerializer(serializers.ModelSerializer):
@@ -18,8 +19,19 @@ class LikeSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
     likes = LikeSerializer(many=True, read_only=True)
-
+    author = UserSerializer(read_only=True)  # Include author field as read-only
+    
     class Meta:
         model = Post
         fields = '__all__'
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        post = Post.objects.create(author=request.user, **validated_data)
+        return post
         
+    # The above method is also achievable by using perform_create in the views i.e 
+    # def perform_create(self, serializer):
+        # This method will call the create method in the serializer
+        # serializer.save(author=self.request.user)
+

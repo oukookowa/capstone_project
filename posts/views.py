@@ -35,7 +35,7 @@ class IsOwnerOrReadOnly(BasePermission):
             return True
 
         # Write permissions are only allowed to the owner of the object.
-        return obj.owner == request.user
+        return obj.author == request.user
 
 # View for liking a post  
 class LikePostView(generics.CreateAPIView):
@@ -89,7 +89,7 @@ class PostViewSet(viewsets.ModelViewSet):
         if self.action == 'list':
             permission_classes = [IsAuthenticatedOrReadOnly]
         elif self.action == 'create':
-            permission_classes = [IsAuthenticated, IsAdminUser]
+            permission_classes = [IsAuthenticated]
         elif self.action == 'retrieve':
             permission_classes = [IsAuthenticatedOrReadOnly]
         else:

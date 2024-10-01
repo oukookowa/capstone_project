@@ -46,13 +46,18 @@ class FollowUserView(generics.GenericAPIView):
 
     def post(self, request, user_id):
         try:
-            user_to_follow = User.objects.get(id=user_id) 
-            request.user.following.add(user_to_follow)
-            serialized_user = UserSerializer(user_to_follow)
-            return Response({
-                "detail": "Now following.",
-                "user": serialized_user.data
-                }, status=status.HTTP_201_CREATED)
+            user_to_follow = User.objects.get(id=user_id)
+
+            # Check if user to follow is legitimate 
+            if user_to_follow != request.user and user_to_follow not in request.user.following.all():
+                request.user.following.add(user_to_follow)
+                serialized_user = UserSerializer(user_to_follow)
+                return Response({
+                    "detail": "Now following.",
+                    "user": serialized_user.data
+                    }, status=status.HTTP_201_CREATED)
+            else:
+                return Response({"Detail": "You cannot follow yourself or someone you're already following!"})
         except User.DoesNotExist:
             return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -63,11 +68,16 @@ class UnfollowUserView(generics.GenericAPIView):
     def post(self, request, user_id):
         try:
             user_to_unfollow = User.objects.get(id=user_id)
-            request.user.following.remove(user_to_unfollow)
-            serialized_user = UserSerializer(user_to_unfollow)
-            return Response({
-                "detail": "Unfollowed.",
-                "user": serialized_user.data
-                }, status=status.HTTP_204_NO_CONTENT)
+            
+            # Check if user to unfollow is legitimate
+            if user_to_unfollow != request.user and user_to_unfollow in request.user.following.all():
+                request.user.following.remove(user_to_unfollow)
+                serialized_user = UserSerializer(user_to_unfollow)
+                return Response({
+                    "detail": "Unfollowed.",
+                    "user": serialized_user.data
+                    }, status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response({"Detail": "You cannot unfollow yourself or a non-exitent follower!"})
         except User.DoesNotExist:
             return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)

@@ -5,20 +5,14 @@ User = get_user_model() # Retrieve the auth_user model being used by django
 
 # Post model allowing users to create posts
 class Post(models.Model):
-    MEDIA_TYPE_CHOICES = [
-                ('image', 'Image'),
-                ('video', 'Video'),
-            ]
-
     title = models.CharField(max_length=150)
     content = models.TextField(blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts') 
-    image = models.ImageField(upload_to='/posts/images/', blank=True, null=True)
-    video = models.FileField(upload_to='/posts/videos/', blank=True, null=True)
-    media_type = models.CharField(max_length=5, choices=MEDIA_TYPE_CHOICES)
-
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
+    image = models.ImageField(upload_to='posts/images/', blank=True, null=True)
+    video = models.FileField(upload_to='posts/videos/', blank=True, null=True)
+    
     def __str__(self):
         return f"{self.content[:25]} by {self.author}"
 
