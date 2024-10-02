@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework import viewsets, generics, status
-from rest_framework.permissions import SAFE_METHODS, BasePermission, IsAuthenticatedOrReadOnly, IsAdminUser, IsAuthenticated
+from rest_framework.permissions import SAFE_METHODS, BasePermission, IsAuthenticatedOrReadOnly, IsAuthenticated
 from .models import Post, Comment, Like
 from .serializers import PostSerializer, CommentSerializer, LikeSerializer
 from django_filters.rest_framework import DjangoFilterBackend
@@ -8,14 +8,14 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
-from notifications.models import Notification
+
 
 
 User = get_user_model()
 
 # Feed view to display list of Posts from a users the current user is following
 class FeedView(generics.ListAPIView):
-    permission_classes = [IsAuthenticated] #permissions.IsAuthenticated
+    permission_classes = [IsAuthenticated] # Permission
     serializer_class = PostSerializer
 
     def get_queryset(self):
@@ -43,17 +43,10 @@ class LikePostView(generics.CreateAPIView):
     serializer_class = LikeSerializer
 
     def post(self, request, pk):
-        post = get_object_or_404(Post, pk=pk) #generics.get_object_or_404(Post, pk=pk) ->IDK why checker needs this
+        post = get_object_or_404(Post, pk=pk) # Get instance of a post given pk
         like, created = Like.objects.get_or_create(user=request.user, post=post)
 
         if created:
-            # Create a notification
-            Notification.objects.create(
-                recipient=post.user,
-                actor=request.user,
-                verb='liked your post',
-                target=post
-            )
             return Response({"detail": "Post liked."}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail": "You have already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
@@ -79,10 +72,11 @@ class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['title', 'author', 'content', 'created_at']
+    filterset_fields = ['title', 'author', 'content', 'created_at']  # Fields to include in filtersets
     search_fields = ['title', 'content']
     ordering_fields = ['title', 'created_at']
-    permission_classes = [IsAuthenticated, IsAdminUser, IsOwnerOrReadOnly]
+    ordering = ['-created_at']  # Set default ordering
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
     # Overide get permissions to dynamically set permissions
     def get_permissions(self):
@@ -100,14 +94,20 @@ class PostViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticated, IsAdminUser, IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ['author', 'content', 'created_at', 'updated_at']
+    search_fields = ['content', 'author__username']
+    ordering_fields = ['created_at', 'updated_at']
+    ordering = ['-created_at']  # Set default ordering
+
 
     # Overide get permissions to dynamically set permissions
     def get_permissions(self):
         if self.action == 'list':
             permission_classes = [IsAuthenticatedOrReadOnly]
         elif self.action == 'create':
-            permission_classes = [IsAuthenticated, IsAdminUser]
+            permission_classes = [IsAuthenticated]
         elif self.action == 'detail':
             permission_classes = [IsAuthenticatedOrReadOnly]
         else:

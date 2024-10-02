@@ -9,5 +9,6 @@ class NotificationListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = NotificationSerializer
 
+    # Filter through queryset to find notifications associate with a particular user
     def get_queryset(self):
         return Notification.objects.filter(recipient=self.request.user).order_by('-timestamp')
