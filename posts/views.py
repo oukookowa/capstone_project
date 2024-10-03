@@ -69,6 +69,7 @@ class UnlikePostView(generics.DestroyAPIView):
 # Implemented views using rest-framework's viewsets
 # for CRUD operations for the Post model
 class PostViewSet(viewsets.ModelViewSet):
+    '''Function:'''
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
