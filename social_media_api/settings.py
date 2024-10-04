@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'posts',
     'notifications',
     'django_filters',
+    'messages.apps.CustomMessagesConfig'
 ]
 
 MIDDLEWARE = [
@@ -162,6 +163,6 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-        # You can add more permissions if necessary
+        # Add more permissions if necessary
     ),
 }

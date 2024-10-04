@@ -76,7 +76,7 @@ class PostViewSet(viewsets.ModelViewSet):
     filterset_fields = ['title', 'author', 'content', 'created_at']  # Fields to include in filtersets
     search_fields = ['title', 'content']
     ordering_fields = ['title', 'created_at']
-    ordering = ['-created_at']  # Set default ordering
+    ordering = ['-created_at', '-comments_count']  # Set default ordering
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
     # Overide get permissions to dynamically set permissions

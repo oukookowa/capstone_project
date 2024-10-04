@@ -13,6 +13,11 @@ class Post(models.Model):
     image = models.ImageField(upload_to='posts/images/', blank=True, null=True)
     video = models.FileField(upload_to='posts/videos/', blank=True, null=True)
     
+    # Function to allow for sorting using the count of comments a post has
+    @property
+    def comments_count(self):
+        return self.comments.count()
+
     def __str__(self):
         return f"{self.content[:25]} by {self.author}"
 
