@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
-User = get_user_model() # Retrieve the auth_user model being used by django
+User = get_user_model() # Retrieve the default auth_user model
 
 # Conversation model consisting of two or more participants
 class Conversation(models.Model):

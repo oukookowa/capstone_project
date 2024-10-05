@@ -10,11 +10,13 @@ from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 
 
-
+# Get default auth user model
 User = get_user_model()
 
-# Feed view to display list of Posts from a users the current user is following
 class FeedView(generics.ListAPIView):
+    '''
+    Function: Displays list of Posts from a users the current user is following
+    '''
     permission_classes = [IsAuthenticated] # Permission
     serializer_class = PostSerializer
 
@@ -26,8 +28,10 @@ class FeedView(generics.ListAPIView):
         # Retrieve posts from those users
         return Post.objects.filter(author__in=following_users).order_by('-created_at')
     
-# Custom permission to allow read for everyone and write for the owner of the object
 class IsOwnerOrReadOnly(BasePermission):
+    '''
+    Function: A custom permission to allow read from anyone and write for the owner of the object
+    '''
     def has_object_permission(self, request, view, obj):
         # Read permissions are allowed to any request,
         # so we'll always allow GET, HEAD, or OPTIONS requests.
@@ -37,8 +41,10 @@ class IsOwnerOrReadOnly(BasePermission):
         # Write permissions are only allowed to the owner of the object.
         return obj.author == request.user
 
-# View for liking a post  
 class LikePostView(generics.CreateAPIView):
+    '''
+    Function: Allows authenticated users to like a post
+    '''
     permission_classes = [IsAuthenticated]
     serializer_class = LikeSerializer
 
@@ -51,8 +57,10 @@ class LikePostView(generics.CreateAPIView):
         else:
             return Response({"detail": "You have already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
 
-# View for unliking a post
 class UnlikePostView(generics.DestroyAPIView):
+    '''
+    Function: Allows authenticated users to unlike a post that they have liked
+    '''
     permission_classes = [IsAuthenticated]
     serializer_class = LikeSerializer
 
@@ -65,18 +73,19 @@ class UnlikePostView(generics.DestroyAPIView):
         except Like.DoesNotExist:
             return Response({"detail": "You have not liked this post."}, status=status.HTTP_400_BAD_REQUEST)
     
-
-# Implemented views using rest-framework's viewsets
-# for CRUD operations for the Post model
 class PostViewSet(viewsets.ModelViewSet):
-    '''Function:'''
+    '''
+    Function: Allows users to see a list of all posts and retrieve post detail,
+    authenticated users to create a post and retrieve post detail, 
+    post owners to update or delete a post
+    '''
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['title', 'author', 'content', 'created_at']  # Fields to include in filtersets
     search_fields = ['title', 'content']
-    ordering_fields = ['title', 'created_at']
-    ordering = ['-created_at', '-comments_count']  # Set default ordering
+    ordering_fields = ['title', 'created_at', 'comments_count']
+    ordering = ['-created_at']  # Set default ordering
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
     # Overide get permissions to dynamically set permissions
@@ -91,8 +100,12 @@ class PostViewSet(viewsets.ModelViewSet):
             permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
         return [permission() for permission in permission_classes]
 
-# Viewsets for CRUD operations for the Comment model
 class CommentViewSet(viewsets.ModelViewSet):
+    '''
+    Function: Allows users to see a list of all comments and retrieve comment detail,
+    authenticated users to create a comment and retrieve comment detail, 
+    post owners to update or delete a comment
+    '''
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]

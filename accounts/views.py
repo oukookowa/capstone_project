@@ -7,17 +7,21 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import RegisterSerializer, LoginSerializer, UserSerializer
 from django.contrib.auth import get_user_model
 
-
+# Get the default auth user model
 User = get_user_model()
 
-# Register view for user registration
 class RegisterView(generics.CreateAPIView):
+    '''
+    Function: Allows users to register using their credentials
+    '''
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
 
-# Login view for user login
 class LoginView(ObtainAuthToken):
+    '''
+    Function: Allows users to login using their credentials
+    '''
     serializer_class = LoginSerializer
 
     def post(self, request, *args, **kwargs):
@@ -32,16 +36,21 @@ class LoginView(ObtainAuthToken):
             })
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# Profile view for user to manage profile
 class UserProfileView(generics.RetrieveUpdateAPIView):
+    '''
+    Function: Allows users to view and update their profile
+    '''
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
         return self.request.user
     
-# A view to follow a particular user and error handling in case user doesn't exist
 class FollowUserView(generics.GenericAPIView):
+    '''
+    Function: Allows a user to follow another user,
+    including error handling if the user to follow doesn't exist
+    '''
     permission_classes = [IsAuthenticated]  # permissions
 
     def post(self, request, user_id):
@@ -61,8 +70,11 @@ class FollowUserView(generics.GenericAPIView):
         except User.DoesNotExist:
             return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
-# A view to unfollow a user and error handling in case user doesn't exist
 class UnfollowUserView(generics.GenericAPIView):
+    '''
+    Function: Allows a user to unfollow another user,
+    including error handling if the user to unfollow doesn't exist
+    '''
     permission_classes = [IsAuthenticated]
 
     def post(self, request, user_id):
