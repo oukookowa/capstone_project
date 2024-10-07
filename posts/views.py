@@ -152,5 +152,5 @@ class RepostView(generics.GenericAPIView):
             return Response({"error": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
 
         # Create the repost
-        repost = Repost.objects.create(original_post=original_post, user=request.user)
+        repost = Repost.objects.create(comment=request.data['comment'], original_post=original_post, user=request.user)
         return Response(RepostSerializer(repost).data, status=status.HTTP_201_CREATED)

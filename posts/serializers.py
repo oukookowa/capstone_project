@@ -34,7 +34,7 @@ class RepostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Repost
-        fields = ['original_post', 'user', 'created_at']
+        fields = ['original_post', 'user', 'created_at', 'comment']
 
 # Post serializer to serialize a post together with comments & likes
 # associated with it

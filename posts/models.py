@@ -25,6 +25,7 @@ class Repost(models.Model):
     original_post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='reposts')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reposts')
     created_at = models.DateTimeField(auto_now_add=True)
+    comment = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.user.username} reposted {self.original_post.author.username}'s post"
