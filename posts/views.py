@@ -1,14 +1,14 @@
 from django.shortcuts import render
-from rest_framework import viewsets, generics, status
+from rest_framework import viewsets, generics, status, serializers
 from rest_framework.permissions import SAFE_METHODS, BasePermission, IsAuthenticatedOrReadOnly, IsAuthenticated
-from .models import Post, Comment, Like
-from .serializers import PostSerializer, CommentSerializer, LikeSerializer
+from .models import Post, Comment, Like, Repost
+from .serializers import PostSerializer, RepostSerializer, CommentSerializer, LikeSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
-
+import logging
 
 # Get default auth user model
 User = get_user_model()
@@ -24,9 +24,9 @@ class FeedView(generics.ListAPIView):
         # Get the current user
         user = self.request.user
         # Get the list of users the current user follows
-        following_users = user.following.all()
+        followed_users = user.following.all()
         # Retrieve posts from those users
-        return Post.objects.filter(author__in=following_users).order_by('-created_at')
+        return Post.objects.filter(author__in=followed_users).order_by('-created_at')
     
 class IsOwnerOrReadOnly(BasePermission):
     '''
@@ -47,6 +47,7 @@ class LikePostView(generics.CreateAPIView):
     '''
     permission_classes = [IsAuthenticated]
     serializer_class = LikeSerializer
+    queryset = Like.objects.all()
 
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk) # Get instance of a post given pk
@@ -127,3 +128,29 @@ class CommentViewSet(viewsets.ModelViewSet):
         else:
             permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
         return [permission() for permission in permission_classes]
+    
+class RepostView(generics.GenericAPIView):
+    '''
+    Function: Allows a user to create a repost for an existing post,
+    and allows for querying to list the reposts
+    '''
+    serializer_class = RepostSerializer
+    permission_class = [IsAuthenticated]
+    queryset = Repost.objects.all()
+
+    def get(self, request, post_id):
+        # List all reposts for a specific post
+        reposts = self.queryset.filter(original_post__id=post_id)
+        serializer = self.get_serializer(reposts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, post_id):
+        # Access the post_id from the URL kwargs
+        try:
+            original_post = get_object_or_404(Post, pk=post_id)
+        except Post.DoesNotExist:
+            return Response({"error": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Create the repost
+        repost = Repost.objects.create(original_post=original_post, user=request.user)
+        return Response(RepostSerializer(repost).data, status=status.HTTP_201_CREATED)

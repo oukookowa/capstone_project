@@ -10,7 +10,7 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['id', 'conversation', 'sender', 'content', 'created_at']
+        fields = ['conversation', 'sender', 'content', 'created_at']
 
     # Associate a message with the authenticated user at the instance
     def create(self, validated_data):

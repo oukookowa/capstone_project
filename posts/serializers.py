@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from . models import Post, Comment, Like
+from . models import Post, Comment, Like, Repost
 from accounts.serializers import UserSerializer
 
 # Comment serializer to serialize a comment
@@ -29,13 +29,21 @@ class LikeSerializer(serializers.ModelSerializer):
         like = Like.objects.create(author=request.user, **validated_data)
         return like
 
+class RepostSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Repost
+        fields = ['original_post', 'user', 'created_at']
+
 # Post serializer to serialize a post together with comments & likes
 # associated with it
 class PostSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
     likes = LikeSerializer(many=True, read_only=True)
     author = UserSerializer(read_only=True)  # Include author field as read-only
-    
+    reposts = RepostSerializer(many=True, read_only=True)
+
     class Meta:
         model = Post
         fields = '__all__'
@@ -50,4 +58,3 @@ class PostSerializer(serializers.ModelSerializer):
     # def perform_create(self, serializer):
         # This method will call the create method in the serializer
         # serializer.save(author=self.request.user)
-
