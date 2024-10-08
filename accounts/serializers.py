@@ -9,7 +9,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'bio', 'profile_picture', 'followers']
+        fields = ['id', 'username', 'email', 'bio', 'profile_picture', 'followers', 'cover_photo', 'location', 'website']
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True) # Prevents exposure of passwords on client responses

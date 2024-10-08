@@ -4,7 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.auth import get_user_model
 
-User = get_user_model() # asking django to use the user model in use
+User = get_user_model() # asking django to use the default user model in use
 
 # Notification model to alert user when someone comment on or like their post
 class Notification(models.Model):

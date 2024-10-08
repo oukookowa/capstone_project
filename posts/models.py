@@ -5,14 +5,17 @@ User = get_user_model() # Retrieve the auth_user model being used by django
 
 # Post model allowing users to create posts
 class Post(models.Model):
-    title = models.CharField(max_length=150)
+    title = models.CharField(max_length=150, blank=True, null=True)
     content = models.TextField(blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     image = models.ImageField(upload_to='posts/images/', blank=True, null=True)
     video = models.FileField(upload_to='posts/videos/', blank=True, null=True)
-    
+    mentions = models.ManyToManyField(User, related_name='mentioned_in', blank=True) # Allows users to mention other users starting with @<user>
+    hashtags = models.ManyToManyField('Hashtag', related_name='posts', blank=True) # Allows users to relate posts to hashtag(s) starting with #<hastag name>
+
+
     # Function to allow for sorting using the count of comments a post has
     @property
     def comments_count(self):
@@ -52,3 +55,10 @@ class Like(models.Model):
 
     def __str__(self):
         return f"{self.post[:20]} liked by {self.user}"
+    
+# A model that allows for the creation and tracking of hashtags
+class Hashtag(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return f"#{self.name}"

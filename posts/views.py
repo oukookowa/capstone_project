@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import viewsets, generics, status, serializers
+from rest_framework import viewsets, generics, status
 from rest_framework.permissions import SAFE_METHODS, BasePermission, IsAuthenticatedOrReadOnly, IsAuthenticated
 from .models import Post, Comment, Like, Repost
 from .serializers import PostSerializer, RepostSerializer, CommentSerializer, LikeSerializer
@@ -8,7 +8,8 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
-import logging
+
+import logging # Using for debugging
 
 # Get default auth user model
 User = get_user_model()
@@ -154,3 +155,23 @@ class RepostView(generics.GenericAPIView):
         # Create the repost
         repost = Repost.objects.create(comment=request.data['comment'], original_post=original_post, user=request.user)
         return Response(RepostSerializer(repost).data, status=status.HTTP_201_CREATED)
+    
+class HashtagPostsView(generics.ListAPIView):
+    '''
+    View for listing posts associated with a particular hashtag
+    '''
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        hashtag = self.kwargs['hashtag']
+        return Post.objects.filter(hashtags__name=hashtag)
+    
+class MentionedPostsView(generics.ListAPIView):
+    '''
+    View for listing posts where a user is mentioned
+    '''
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        username = self.kwargs['username']
+        return Post.objects.filter(mentions__username=username)

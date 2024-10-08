@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from . models import Post, Comment, Like, Repost
+from . models import Post, Comment, Like, Repost, Hashtag
 from accounts.serializers import UserSerializer
 
 # Comment serializer to serialize a comment
@@ -36,6 +36,11 @@ class RepostSerializer(serializers.ModelSerializer):
         model = Repost
         fields = ['original_post', 'user', 'created_at', 'comment']
 
+class HashtagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hashtag
+        fields = ['id', 'name']
+
 # Post serializer to serialize a post together with comments & likes
 # associated with it
 class PostSerializer(serializers.ModelSerializer):
@@ -43,6 +48,8 @@ class PostSerializer(serializers.ModelSerializer):
     likes = LikeSerializer(many=True, read_only=True)
     author = UserSerializer(read_only=True)  # Include author field as read-only
     reposts = RepostSerializer(many=True, read_only=True)
+    mentions = UserSerializer(many=True, read_only=True)  # To display full user info for mentions
+    hashtags = HashtagSerializer(many=True, read_only=True)
 
     class Meta:
         model = Post

@@ -20,7 +20,7 @@ class RegisterView(generics.CreateAPIView):
 
 class LoginView(ObtainAuthToken):
     '''
-    Function: Allows users to login using their credentials
+    Function: Allows users to login using their credentials and obtain authentication token
     '''
     serializer_class = LoginSerializer
 
@@ -40,11 +40,12 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
     '''
     Function: Allows users to view and update their profile
     '''
+    queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
-        return self.request.user
+        return self.request.user    # Ensures users can only update their own profile
     
 class FollowUserView(generics.GenericAPIView):
     '''
