@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from . models import Post, Comment, Like, Repost, Hashtag
 from accounts.serializers import UserSerializer
-from taggit.managers import TaggableManager
+
 
 # Comment serializer to serialize a comment
 class CommentSerializer(serializers.ModelSerializer):
