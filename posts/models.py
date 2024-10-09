@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from taggit.managers import TaggableManager
 
 User = get_user_model() # Retrieve the auth_user model being used by django
 
@@ -14,7 +15,7 @@ class Post(models.Model):
     video = models.FileField(upload_to='posts/videos/', blank=True, null=True)
     mentions = models.ManyToManyField(User, related_name='mentioned_in', blank=True) # Allows users to mention other users starting with @<user>
     hashtags = models.ManyToManyField('Hashtag', related_name='posts', blank=True) # Allows users to relate posts to hashtag(s) starting with #<hastag name>
-
+    tags = TaggableManager()
 
     # Function to allow for sorting using the count of comments a post has
     @property

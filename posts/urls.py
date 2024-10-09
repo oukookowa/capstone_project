@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import PostViewSet, CommentViewSet, FeedView, LikePostView, UnlikePostView, RepostView, HashtagPostsView, MentionedPostsView
+from .views import PostViewSet, CommentViewSet, FeedView, LikePostView, UnlikePostView, RepostView, HashtagPostsView, MentionedPostsView, TagPostsView
 from rest_framework.routers import DefaultRouter
 
 
@@ -18,4 +18,5 @@ urlpatterns = [
     path('posts/<int:post_id>/reposts/', RepostView.as_view(), name='repost-post'),
     path('posts/hashtag/<str:hashtag>/', HashtagPostsView.as_view(), name='hashtag-posts'),
     path('posts/mention/<str:username>/', MentionedPostsView.as_view(), name='mentioned-posts'),
+    path('posts/tag/<str:tag>/', TagPostsView.as_view(), name='tag-posts')
 ]

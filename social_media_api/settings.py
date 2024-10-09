@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'posts',
     'notifications',
     'django_filters',
-    'messages.apps.CustomMessagesConfig'
+    'messages.apps.CustomMessagesConfig',  # A conflict ensued between the in-built django messaging app
+    'taggit',
 ]
 
 MIDDLEWARE = [

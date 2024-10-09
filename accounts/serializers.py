@@ -20,7 +20,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # Use Django's create_user() to hash the password
-        user = get_user_model().objects.create_user(  # User explicitly stated at the top for easy mgt. Put here for checker
+        user = User.objects.create_user(  # Default User model explicitly stated at the top for easy mgt
             username=validated_data['username'], 
             email=validated_data['email'],
             password=validated_data['password']  # This ensures password is hashed

@@ -1,0 +1,42 @@
+[
+    {
+      "model": "taggit.tag",
+      "pk": 1,
+      "fields": {
+        "name": "science",
+        "slug": "science"
+      }
+    },
+    {
+      "model": "taggit.tag",
+      "pk": 2,
+      "fields": {
+        "name": "politics",
+        "slug": "politics"
+      }
+    },
+    {
+      "model": "taggit.tag",
+      "pk": 3,
+      "fields": {
+        "name": "social",
+        "slug": "social"
+      }
+    },
+    {
+      "model": "taggit.tag",
+      "pk": 4,
+      "fields": {
+        "name": "finance",
+        "slug": "finance"
+      }
+    },
+    {
+      "model": "taggit.tag",
+      "pk": 5,
+      "fields": {
+        "name": "jobs",
+        "slug": "jobs"
+      }
+    }   
+  ]

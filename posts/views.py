@@ -8,6 +8,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
+from taggit.models import Tag
 
 import logging # Using for debugging
 
@@ -161,6 +162,7 @@ class HashtagPostsView(generics.ListAPIView):
     View for listing posts associated with a particular hashtag
     '''
     serializer_class = PostSerializer
+    permission_class = [IsAuthenticated]
 
     def get_queryset(self):
         hashtag = self.kwargs['hashtag']
@@ -171,7 +173,20 @@ class MentionedPostsView(generics.ListAPIView):
     View for listing posts where a user is mentioned
     '''
     serializer_class = PostSerializer
+    permission_class = [IsAuthenticated]
 
     def get_queryset(self):
         username = self.kwargs['username']
         return Post.objects.filter(mentions__username=username)
+
+class TagPostsView(generics.ListAPIView):
+    '''
+    View for listing posts related to a particular tag
+    '''
+    serializer_class = PostSerializer
+    permission_class = [IsAuthenticated]
+
+    def get_queryset(self):
+        tag = self.kwargs['tag']
+        return Post.objects.prefetch_related('tags').filter(tags__name=tag)
+    
