@@ -96,7 +96,6 @@ class PostViewSet(viewsets.ModelViewSet):
     search_fields = ['title', 'content']
     ordering_fields = ['title', 'created_at', 'comments_count']
     ordering = ['-created_at']  # Set default ordering
-    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
     # Overide get permissions to dynamically set permissions
     def get_permissions(self):
@@ -118,7 +117,6 @@ class CommentViewSet(viewsets.ModelViewSet):
     '''
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['author', 'content', 'created_at', 'updated_at']
     search_fields = ['content', 'author__username']
@@ -144,7 +142,7 @@ class RepostView(generics.GenericAPIView):
     and allows for querying to list the reposts
     '''
     serializer_class = RepostSerializer
-    permission_class = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     queryset = Repost.objects.all()
 
     def get(self, request, post_id):
