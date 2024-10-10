@@ -1,14 +1,16 @@
 from django.shortcuts import render
 from rest_framework import viewsets, generics, status
-from rest_framework.permissions import SAFE_METHODS, BasePermission, IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import (SAFE_METHODS, BasePermission, 
+                                        IsAuthenticatedOrReadOnly, 
+                                        IsAuthenticated)
 from .models import Post, Comment, Like, Repost
-from .serializers import PostSerializer, RepostSerializer, CommentSerializer, LikeSerializer
+from .serializers import (PostSerializer, RepostSerializer, 
+                          CommentSerializer, LikeSerializer)
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
-
 
 import logging # Using for debugging
 
@@ -32,7 +34,8 @@ class FeedView(generics.ListAPIView):
     
 class IsOwnerOrReadOnly(BasePermission):
     '''
-    Function: A custom permission to allow read from anyone and write for the owner of the object
+    Function: A custom permission to allow read from anyone,
+    and write for the owner of the object
     '''
     def has_object_permission(self, request, view, obj):
         # Read permissions are allowed to any request,
@@ -56,9 +59,11 @@ class LikePostView(generics.CreateAPIView):
         like, created = Like.objects.get_or_create(user=request.user, post=post)
 
         if created:
-            return Response({"detail": "Post liked."}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "Post liked."}, 
+                            status=status.HTTP_201_CREATED)
         else:
-            return Response({"detail": "You have already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "You have already liked this post."}, 
+                            status=status.HTTP_400_BAD_REQUEST)
 
 class UnlikePostView(generics.DestroyAPIView):
     '''
@@ -72,9 +77,11 @@ class UnlikePostView(generics.DestroyAPIView):
         try:
             like = Like.objects.get(user=request.user, post=post)
             like.delete()
-            return Response({"detail": "Post unliked."}, status=status.HTTP_204_NO_CONTENT)
+            return Response({"detail": "Post unliked."}, 
+                            status=status.HTTP_204_NO_CONTENT)
         except Like.DoesNotExist:
-            return Response({"detail": "You have not liked this post."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "You have not liked this post."}, 
+                            status=status.HTTP_400_BAD_REQUEST)
     
 class PostViewSet(viewsets.ModelViewSet):
     '''
@@ -85,7 +92,7 @@ class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['title', 'author', 'content', 'created_at']  # Fields to include in filtersets
+    filterset_fields = ['title', 'author', 'content', 'created_at']  
     search_fields = ['title', 'content']
     ordering_fields = ['title', 'created_at', 'comments_count']
     ordering = ['-created_at']  # Set default ordering
@@ -151,11 +158,15 @@ class RepostView(generics.GenericAPIView):
         try:
             original_post = get_object_or_404(Post, pk=post_id)
         except Post.DoesNotExist:
-            return Response({"error": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Post not found."}, 
+                            status=status.HTTP_404_NOT_FOUND)
 
         # Create the repost
-        repost = Repost.objects.create(comment=request.data['comment'], original_post=original_post, user=request.user)
-        return Response(RepostSerializer(repost).data, status=status.HTTP_201_CREATED)
+        repost = Repost.objects.create(comment=request.data['comment'], 
+                                       original_post=original_post, 
+                                       user=request.user)
+        return Response(RepostSerializer(repost).data, 
+                        status=status.HTTP_201_CREATED)
     
 class HashtagPostsView(generics.ListAPIView):
     '''
@@ -185,8 +196,10 @@ class TagPostsView(generics.ListAPIView):
     '''
     serializer_class = PostSerializer
     permission_class = [IsAuthenticated]
+    # For efficient querrying of posts alongside related tags
+    queryset = Post.objects.prefetch_related('tags') 
 
     def get_queryset(self):
         tag = self.kwargs['tag']
-        return Post.objects.prefetch_related('tags').filter(tags__name=tag)
+        return Post.objects.filter(tags__name=tag)
     

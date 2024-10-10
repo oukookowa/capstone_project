@@ -167,3 +167,6 @@ REST_FRAMEWORK = {
         # Add more permissions if necessary
     ),
 }
+
+# Make the tags to be case insensitive when using taggit
+TAGGIT_CASE_INSENSITIVE = True

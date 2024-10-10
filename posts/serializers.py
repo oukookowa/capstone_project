@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from . models import Post, Comment, Like, Repost, Hashtag
 from accounts.serializers import UserSerializer
-
+from taggit.serializers import (TagListSerializerField,
+                                TaggitSerializer)
 
 # Comment serializer to serialize a comment
 class CommentSerializer(serializers.ModelSerializer):
@@ -44,14 +45,14 @@ class HashtagSerializer(serializers.ModelSerializer):
 
 # Post serializer to serialize a post together with comments & likes
 # associated with it
-class PostSerializer(serializers.ModelSerializer):
+class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
     likes = LikeSerializer(many=True, read_only=True)
-    author = UserSerializer(read_only=True)  # Include author field as read-only
+    author = UserSerializer(read_only=True)  # Include author field details as read-only
     reposts = RepostSerializer(many=True, read_only=True)
     mentions = UserSerializer(many=True, read_only=True)  # To display full user info for mentions
     hashtags = HashtagSerializer(many=True, read_only=True)
-    tags = serializers.ListField(child=serializers.CharField(), source='tags.name', required=False) # ListField holds a list of tag names, source instructs the place to get the data from
+    tags = TagListSerializerField() # Holds the tags associated with an instance of a post
 
     class Meta:
         model = Post
@@ -60,10 +61,14 @@ class PostSerializer(serializers.ModelSerializer):
     # Associate a post with the authenticated user at the instance a post is created
     def create(self, validated_data):
         request = self.context.get('request')
-        post = Post.objects.create(author=request.user, **validated_data)
+        tags = validated_data.pop('tags', [])  # Pop tags from validated data
+        post = Post.objects.create(author=request.user, **validated_data) # Set author
+        post.tags.set(tags)  # Add respective tags to the post instance explicitly
         return post
         
-    # The above method is also achievable by using perform_create in the views i.e 
-    # def perform_create(self, serializer):
-        # This method will call the create method in the serializer
-        # serializer.save(author=self.request.user)
+    ''' 
+    The above method is also achievable by using perform_create in the views i.e 
+    def perform_create(self, serializer):
+        This method will call the create method in the serializer
+        serializer.save(author=self.request.user)
+    '''
