@@ -6,7 +6,8 @@ User = get_user_model() # Retrieve the auth_user model being used by django
 
 # Message serializer to serialize an instance of a message
 class MessageSerializer(serializers.ModelSerializer):
-    sender = serializers.ReadOnlyField(source='sender.username')
+    # Sender will be read only so that data is assigned to user issuing request
+    sender = serializers.ReadOnlyField(source='sender.username')  
 
     class Meta:
         model = Message
@@ -37,6 +38,7 @@ class ConversationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Conversation
         fields = [
+            'id',
             'participants', 
             'participant_usernames', 
             'messages', 

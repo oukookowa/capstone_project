@@ -20,7 +20,7 @@ def send_like_notification(sender, instance, created, **kwargs):
         Notification.objects.create(
             recipient=author,
             actor=liker,
-            verb=f"{liker.username}liked your post",
+            verb=f"{liker.username} liked your post",
             target_content_type=ContentType.objects.get_for_model(Like),
             target_object_id=instance.id,
         )
@@ -60,7 +60,7 @@ def create_message_notification(sender, instance, created, **kwargs):
             Notification.objects.create(
                 recipient=recipient,
                 actor=sender,
-                verb=f"{sender.username}sent you a message",
+                verb=f"{sender.username} sent you a message",
                 target_content_type=ContentType.objects.get_for_model(Message),
                 target_object_id=instance.id,
             )
