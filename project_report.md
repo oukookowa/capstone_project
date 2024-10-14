@@ -1,6 +1,10 @@
+---
+title: "Capstone Project"
+author: "Ouko Okowa"
+geometry: "margin=1in"  # Set margins to 1 inch
+---
 
-# Capstone Project  
-**Pinto Okowa**  
+# Social media api  
 **ALX SE - Back-end Engineering**  
 
 ## Project Report and Reflection
@@ -15,7 +19,8 @@ I started the social media project by designing the **ERD diagram**. This was es
 
 I then used **Django ORM** to implement the relationships between entities as described in the ERD diagram. There were challenges in implementing some features like the **tags**. While **Django-taggit** makes it easy to use the tags, I learned that for APIs, you had to make a stretch to ensure the data is saved with the post instance. At first, I didn’t understand why, during post creation, I’d see the tags, only for them to disappear when I tried to retrieve the post. I later learned that **taggit**, despite having the **Tag** model and its serializer, requires one to include the tag serializer in the serializer of the model where the ‘tags’ attribute is used. It also involved setting the tags data from the validated data as shown in the code snippet below:
 
-# Post serializer to serialize a post together with comments, likes, author, reposts, mentions, hashtags, & tags associated with it
+```python
+'''Post serializer to serialize a post together with comments, likes, author,reposts, mentions, hashtags, & tags associated with it'''
 class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
     likes = LikeSerializer(many=True, read_only=True)
@@ -23,19 +28,20 @@ class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
     reposts = RepostSerializer(many=True, read_only=True)
     mentions = UserSerializer(many=True, read_only=True) 
     hashtags = HashtagSerializer(many=True, read_only=True)
-    tags = TagListSerializerField() # Holds the tags associated with an instance of a post
+    tags = TagListSerializerField() # Holds the tags associated with a post
 
     class Meta:
         model = Post
         fields = '__all__'
 
-    # Associate a post with the authenticated user at the instance a post is created
+    # Associate a post with the authenticated user at the instance a post is # created
     def create(self, validated_data):
         request = self.context.get('request')
         tags = validated_data.pop('tags', [])  # Pop tags from validated data
         post = Post.objects.create(author=request.user, **validated_data) # Set author
         post.tags.set(tags)  # Add respective tags to the post instance explicitly
         return post
+```
 
 Finally, I ventured into the **deployment** of my app. I always like adventure. I tried **Dokku** and **Coolify**, which I found to be powerful resources, but configuring Docker properly was challenging. I got so many bugs while trying Coolify. I fixed some, but in the interest of time, I opted for **PythonAnywhere**, which, with much less hassle, allowed me to deploy my second API.
 

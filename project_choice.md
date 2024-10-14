@@ -1,5 +1,8 @@
-# Capstone Project  
-**Pinto Okowa**  
+---
+title: "Capstone Project"
+author: "Ouko Okowa"
+geometry: "margin=1in"  # Set margins to 1 inch
+---    
 **ALX SE - Back-end Engineering**  
 
 ## Social Media API (Blaqee)
@@ -29,7 +32,3 @@ As with traditional social media apps, Blaqee will have features like:
 - **Filtering** and **Sorting**
 
 The goal is to create a platform where users feel their voice and culture are accurately represented, in contrast to existing social media platforms that often overlook or misrepresent minority voices.
-
-
-
-
