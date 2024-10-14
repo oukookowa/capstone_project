@@ -17,6 +17,14 @@ class Post(models.Model):
     hashtags = models.ManyToManyField('Hashtag', related_name='posts', blank=True) # Allows users to relate posts to hashtag(s) starting with #<hastag name>
     tags = TaggableManager()
 
+    # Track the count of likes associated with a post instance
+    def likes_count(self):
+        return self.likes.count()
+
+    # Track the count of reposts associated with a post instance
+    def reposts_count(self):
+        return self.reposts.count()
+
     # Function to allow for sorting using the count of comments a post has
     @property
     def comments_count(self):

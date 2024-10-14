@@ -11,6 +11,9 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
+from django.utils import timezone
+from datetime import timedelta
+from django.db import models
 
 import logging # Using for debugging
 
@@ -197,3 +200,21 @@ class TagPostsView(generics.ListAPIView):
         tag = self.kwargs['tag']
         return Post.objects.filter(tags__name=tag)
     
+class TrendingPostView(generics.ListAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        # Define the time period for trending posts (e.g., last 24 hours)
+        time_threshold = timezone.now() - timedelta(hours=24)
+
+        # Filter posts created within the time period
+        queryset = Post.objects.filter(created_at__gte=time_threshold)
+
+        # Sort the posts by the number of likes or reposts, whichever is more relevant
+        queryset = queryset.annotate(
+            total_likes=models.Count('likes'),
+            total_reposts=models.Count('reposts')
+        ).order_by('-total_likes')  # Trending posts are sorted by popularity
+
+        return queryset
