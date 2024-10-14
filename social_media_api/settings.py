@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'django_filters',
     'messages.apps.CustomMessagesConfig',  # A conflict ensued between the in-built django messaging app
     'taggit',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -66,6 +67,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+]
+
+CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins for development (change for production)
+
+CORS_ALLOWED_ORIGINS = [
+    "https://localhost:8000.com",
+    "https://127.0.0.1:8000.com",
+    "https://oukookowa.pythonanywhere.com",
 ]
 
 ROOT_URLCONF = 'social_media_api.urls'

@@ -99,12 +99,10 @@ class PostViewSet(viewsets.ModelViewSet):
 
     # Overide get permissions to dynamically set permissions
     def get_permissions(self):
-        if self.action == 'list':
+        if self.action == 'list' or self.action == 'retrieve':
             permission_classes = [IsAuthenticatedOrReadOnly]
         elif self.action == 'create':
             permission_classes = [IsAuthenticated]
-        elif self.action == 'retrieve':
-            permission_classes = [IsAuthenticatedOrReadOnly]
         else:
             permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
         return [permission() for permission in permission_classes]
@@ -126,12 +124,10 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     # Overide get permissions to dynamically set permissions
     def get_permissions(self):
-        if self.action == 'list':
+        if self.action == 'list' or self.action == 'retrieve':
             permission_classes = [IsAuthenticatedOrReadOnly]
         elif self.action == 'create':
             permission_classes = [IsAuthenticated]
-        elif self.action == 'detail':
-            permission_classes = [IsAuthenticatedOrReadOnly]
         else:
             permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
         return [permission() for permission in permission_classes]
