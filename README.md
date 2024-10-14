@@ -1,3 +1,3 @@
 # capstone_project
 
-This is a project that focuses on building the fundamental features of a social media application. These features include User Accounts, Posts, Likes, Comments, Shares, Notifications, Direct Messaging, Tags, Hashtags, and Mentions.
+This project focuses on building the fundamental features of a social media application. These features include User Accounts, Posts, Likes, Comments, Shares, Notifications, Direct Messaging, Tags, Hashtags, and Mentions. The API herein provides endpoints for veiwing user posts, as well as views for the specific features included in the app. The app is equiped with user authentication and permissions to restrict access of the application resources. You can fork the project and let's build this together!
