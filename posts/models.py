@@ -25,7 +25,7 @@ class Post(models.Model):
     def reposts_count(self):
         return self.reposts.count()
 
-    # Function to allow for sorting using the count of comments a post has
+    # Function to track the count of comments a post has
     @property
     def comments_count(self):
         return self.comments.count()
