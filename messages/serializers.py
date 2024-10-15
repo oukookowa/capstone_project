@@ -23,7 +23,7 @@ class MessageSerializer(serializers.ModelSerializer):
 class ConversationSerializer(serializers.ModelSerializer):
     messages = MessageSerializer(many=True, read_only=True)
 
-    # Explicitly specify the username field as the slug for the User model. Extracts only username of participants not all object attributes
+    # Explicitly specify the username field as a slug for the User model. Extracts only username of participants not all object attributes
     participants = serializers.SlugRelatedField(
         many=True, 
         slug_field='username', 
