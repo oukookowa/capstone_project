@@ -1,14 +1,14 @@
 # Social Media API Documentation
 
 ## Overview
-This API provides social media functionality, allowing users to create post, like, comment, repost, send direct messages, recieve notifications on posts and messages, and tag content. Users can also follow and mention each other and view trending posts. You can fork the project and let's build this together!
+This API provides social media functionality, allowing users to create post, like, comment, repost, send & recieve direct message, recieve notification when a user reacts to a post or sends a message, and tag content. The API leverages on custom predefined tags, ensuring that each post is related to a tag. This is intended to help in organizing the posts in categories that are essential to improve user experience by targeting an all-in-one social media app - bundling jobs, photos/videos, text blogs, etc together. Users can follow and mention each other on their post and view trending posts. You can fork the project and let's build this together!
 
 ## Base URL
 `<oukookowa.pythonanywhere.com>`
 
 ## Authentication
 All endpoints require authentication unless otherwise specified. Please authenticate by including a token in the headers:
-        Authorization: Bearer <token>
+    `Authorization: Bearer <token>`
 
 
 ## Endpoints Overview
@@ -43,6 +43,7 @@ curl -X POST "oukookowa.pythonanywhere.com/api/posts/" \
            'content': 'This is the content of my post.',
            'tags': ['tag1', 'tag2']
          }"
+```
 
 ## Error Codes
 
