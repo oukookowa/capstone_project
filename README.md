@@ -118,9 +118,11 @@ curl -X POST "oukookowa.pythonanywhere.com/api/posts/" \
 ```
 
 ## Error Codes
-
 - **400**: Bad Request — The request could not be understood or was missing required parameters.
 - **401**: Unauthorized — Authentication failed or user does not have permissions.
 - **403**: Forbidden — Authentication succeeded, but authenticated user does not have access to the resource.
 - **404**: Not Found — The requested resource could not be found.
 - **500**: Server Error — An error occurred on the server.
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
