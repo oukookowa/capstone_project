@@ -97,7 +97,6 @@ All endpoints require authentication unless otherwise specified. Please authenti
 ### Notification Endpoint
 - **Retrieve notifications**: `GET /api/notifications/` (recipient only)
 
-
 ## Example Usage
 ### Create a Post
 ```bash
