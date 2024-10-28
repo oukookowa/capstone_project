@@ -1,3 +1,6 @@
+# © 2024 Ouko Okowa
+# Licensed under the MIT License. See LICENSE file for details.
+
 from django.db import models
 from django.contrib.auth import get_user_model
 from taggit.managers import TaggableManager
