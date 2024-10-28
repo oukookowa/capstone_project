@@ -1,3 +1,6 @@
+# © 2024 Ouko Okowa
+# Licensed under the MIT License. See LICENSE file for details.
+
 from rest_framework import serializers
 from . models import Post, Comment, Like, Repost, Hashtag
 from accounts.serializers import UserSerializer

@@ -1,3 +1,6 @@
+# © 2024 Ouko Okowa
+# Licensed under the MIT License. See LICENSE file for details.
+
 from django.shortcuts import render
 from rest_framework import viewsets, generics, status
 from rest_framework.permissions import (SAFE_METHODS, BasePermission, 

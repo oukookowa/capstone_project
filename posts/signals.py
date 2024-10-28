@@ -1,3 +1,6 @@
+# © 2024 Ouko Okowa
+# Licensed under the MIT License. See LICENSE file for details.
+
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 import re
