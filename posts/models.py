@@ -53,7 +53,7 @@ class Comment(models.Model):
     def __str__(self):
         return f"{self.content[:20]} by {self.author}"
 
-# Like model to enhance user experience by liking a post
+# Like model to enhance user experience by allowing user to like a post
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey('Post', on_delete=models.CASCADE, related_name='likes')
@@ -65,7 +65,7 @@ class Like(models.Model):
     def __str__(self):
         return f"{self.post[:20]} liked by {self.user}"
     
-# A model that allows for the creation and tracking of hashtags
+# Model allows for the creation and tracking of hashtags
 class Hashtag(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
