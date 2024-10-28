@@ -1,0 +1,603 @@
+openapi: 3.0.0
+info:
+  title: Blaqee API
+  description: API for social media functionality including posts, comments, messages, notifications, and more.
+  version: 1.0.0
+  contact:
+    name: Blaqee API Support
+    url: https://oukookowa.pythonanywhere.com
+    email: support@blaqee.com
+
+servers:
+  - url: https://oukookowa.pythonanywhere.com/api
+
+components:
+  securitySchemes:
+    TokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: 'Use the format: Token <token>'
+
+security:
+  - TokenAuth: []
+
+paths:
+  # User Accounts Endpoints
+  /accounts/register/:
+    post:
+      summary: Register a new user
+      description: Registers a new user with username, email, and password.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "exampleuser"
+                email:
+                  type: string
+                  format: email
+                  example: "user@example.com"
+                password:
+                  type: string
+                  example: "password123"
+              required: ["username", "email", "password"]
+      responses:
+        '200':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Registration successful"
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      username:
+                        type: string
+                      email:
+                        type: string
+
+  /accounts/login/:
+    post:
+      summary: User login
+      description: Authenticates a user and returns a token.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "exampleuser"
+                password:
+                  type: string
+                  example: "password123"
+              required: ["username", "password"]
+      responses:
+        '200':
+          description: Token returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR..."
+
+  /accounts/profile/:
+    get:
+      summary: View user profile
+      description: Retrieves current user's profile.
+      responses:
+        '200':
+          description: Profile data returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    example: "exampleuser"
+                  email:
+                    type: string
+                    example: "user@example.com"
+
+    put:
+      summary: Update user profile
+      description: Updates current user's profile information.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "newusername"
+                email:
+                  type: string
+                  example: "newemail@example.com"
+      responses:
+        '200':
+          description: Profile updated successfully
+
+  /accounts/follow/{user_id}/:
+    post:
+      summary: Follow a user
+      description: Follow another user.
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User followed successfully
+
+  /accounts/unfollow/{user_id}/:
+    post:
+      summary: Unfollow a user
+      description: Unfollow another user.
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User unfollowed successfully
+
+  # Posts Endpoint
+  /posts/:
+    post:
+      summary: Create a post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: "My First Post"
+                content:
+                  type: string
+                  example: "This is the content of my post."
+                tags:
+                  type: array
+                  items:
+                    type: string
+                  example: ["tag1", "tag2"]
+      responses:
+        '201':
+          description: Post created successfully
+
+    get:
+      summary: Retrieve all posts
+      description: Retrieves a list of all posts.
+      responses:
+        '200':
+          description: List of posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    title:
+                      type: string
+                    content:
+                      type: string
+                    tags:
+                      type: array
+                      items:
+                        type: string
+
+  /posts/{id}/:
+    get:
+      summary: Retrieve post by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Post data returned
+
+    put:
+      summary: Update a post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: "Updated Post Title"
+                content:
+                  type: string
+                  example: "Updated content here."
+      responses:
+        '200':
+          description: Post updated successfully
+
+    delete:
+      summary: Delete a post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Post deleted successfully
+
+  # Feed Endpoint
+  /feed/:
+    get:
+      summary: Retrieve user feed
+      description: Returns posts from followed users.
+      responses:
+        '200':
+          description: User feed posts returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    title:
+                      type: string
+                    content:
+                      type: string
+
+  # Comments Endpoints
+  /comments/:
+    post:
+      summary: Create a comment
+      description: Adds a comment to a specific post.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                post_id:
+                  type: integer
+                  example: 1
+                content:
+                  type: string
+                  example: "This is a comment on the post."
+              required: ["post_id", "content"]
+      responses:
+        '201':
+          description: Comment created successfully
+
+    get:
+      summary: Retrieve all comments
+      description: Retrieves a list of all comments.
+      responses:
+        '200':
+          description: List of comments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    post_id:
+                      type: integer
+                    content:
+                      type: string
+
+  /comments/{id}/:
+    get:
+      summary: Retrieve comment by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Comment data returned
+
+    put:
+      summary: Update a comment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  example: "Updated comment content."
+      responses:
+        '200':
+          description: Comment updated successfully
+
+    delete:
+      summary: Delete a comment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Comment deleted successfully
+
+  # Conversations Endpoints
+  /conversations/:
+    post:
+      summary: Create a conversation
+      description: Initiates a new conversation.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                participants:
+                  type: array
+                  items:
+                    type: integer
+                  example: ["ouko", "xyz"]  # Use usernames to add participants to a conversation, request.user automatically added to conversation
+              required: ["participants"]
+      responses:
+        '201':
+          description: Conversation created successfully
+
+    get:
+      summary: Retrieve all conversations
+      description: Lists all conversations for the current user.
+      responses:
+        '200':
+          description: List of conversations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    participants:
+                      type: array
+                      items:
+                        type: integer
+
+  /conversations/{id}/:
+    get:
+      summary: Retrieve conversation by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Conversation data returned
+
+    put:
+      summary: Update a conversation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                participants:
+                  type: array
+                  items:
+                    type: integer
+                  example: [1, 3]
+      responses:
+        '200':
+          description: Conversation updated successfully
+
+    delete:
+      summary: Delete a conversation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Conversation deleted successfully
+
+  # Messages Endpoints
+  /message/:
+    post:
+      summary: Send a message
+      description: Sends a message within a conversation.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                conversation_id:
+                  type: integer
+                  example: 1
+                content:
+                  type: string
+                  example: "Hello, this is a message."
+              required: ["conversation_id", "content"]
+      responses:
+        '201':
+          description: Message sent successfully
+
+    get:
+      summary: Retrieve all messages
+      description: Lists all messages in conversations where the user is a participant.
+      responses:
+        '200':
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    conversation_id:
+                      type: integer
+                    content:
+                      type: string
+
+  /message/{id}/:
+    get:
+      summary: Retrieve message by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Message data returned
+
+    put:
+      summary: Update a message
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  example: "Updated message content."
+      responses:
+        '200':
+          description: Message updated successfully
+
+    delete:
+      summary: Delete a message
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Message deleted successfully
+
+  # Notifications Endpoint
+  /notifications/:
+    get:
+      summary: Retrieve notifications
+      description: Retrieves notifications for the current user.
+      responses:
+        "200":
+          description: A list of notifications for the user.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  notifications:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: Unique identifier for the notification
+                          example: 1
+                        actor:
+                          type: string
+                          description: Username of the user who performed the action
+                          example: johndoe
+                        verb:
+                          type: string
+                          description: Action performed, e.g., "[user] liked your post"
+                          example: liked your post
+                        target:
+                          type: object
+                          description: Details of the action target (e.g., post, comment, message)
+                          properties:
+                            id:
+                              type: integer
+                              description: Target object ID
+                              example: 123
+                            content_type:
+                              type: string
+                              description: Type of content (e.g., "Like", "Comment", "Message")
+                              example: "Like"
+                        timestamp:
+                          type: string
+                          format: date-time
+                          description: Timestamp when the notification was created
+                          example: "2024-10-28T15:32:00Z"
+                        read:
+                          type: boolean
+                          description: Indicates if the notification has been read
+                          example: false
+        "401":
+          description: Unauthorized - Authentication failed or user is not authenticated
+        "500":
+          description: Server error - Unable to retrieve notifications
