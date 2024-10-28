@@ -23,7 +23,8 @@ All endpoints require authentication unless otherwise specified. Please authenti
     "username": "exampleuser",
     "email": "user@example.com",
     "password": "password123"
-  }```
+  }
+  ```
 - **Response**: Returns a success message and user details upon successful registration.
 
 ### User Login
@@ -35,7 +36,8 @@ All endpoints require authentication unless otherwise specified. Please authenti
   {
     "username": "exampleuser",
     "password": "password123"
-  }```
+  }
+  ```
 - **Response**: Returns an authentication token for subsequent requests.
 
 ### View and Update User Profile
