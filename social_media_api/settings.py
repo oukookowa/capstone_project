@@ -70,11 +70,11 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins for development (change for production)
+# CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins for development (change for production)
 
 CORS_ALLOWED_ORIGINS = [
-    "https://localhost:8000.com",
-    "https://127.0.0.1:8000.com",
+    "https://localhost:8000",
+    "https://127.0.0.1:8000",
     "https://oukookowa.pythonanywhere.com",
 ]
 
